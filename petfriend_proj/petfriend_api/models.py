@@ -22,12 +22,18 @@ def create_user_profile(sender, instance, created, **kwargs):
     instance.petfrienduser.save()
 
 
+def pet_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT / pet_<id>/<filename>
+    return 'pet_{0}/{1}'.format(instance.user.id, filename)
+
+
 class Pet(models.Model):
     name = models.CharField(max_length=128, unique=True)
     genre = models.SmallIntegerField(choices=((1, "boy"), (2, "girl")))
     species = models.SmallIntegerField(choices=SPECIES)
     variety = models.CharField(max_length=128, null=True)
     birth_date = models.DateField(null=True)
+    profile_image = models.ImageField(null=True, upload_to=pet_directory_path)
     user = models.ForeignKey(PetFriendUser, on_delete=models.CASCADE)
 
     def __str__(self):
