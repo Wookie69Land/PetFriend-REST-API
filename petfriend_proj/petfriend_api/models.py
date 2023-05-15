@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from phonenumber_field.modelfields import PhoneNumberField
 from datetime import date
 
 from .choices import *
@@ -10,6 +11,7 @@ from .choices import *
 
 class PetFriendUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=True, blank=True, unique=True)
 
     def __str__(self):
         return self.user.username
@@ -34,6 +36,8 @@ class Pet(models.Model):
     variety = models.CharField(max_length=128, null=True)
     birth_date = models.DateField(null=True)
     profile_image = models.ImageField(null=True, upload_to=pet_directory_path)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(PetFriendUser, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -45,3 +49,11 @@ class Pet(models.Model):
               ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
         return age
 
+
+class PetHealth(models.Model):
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    diagnosis = models.CharField(max_length=128)
+    description = models.TextField(null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    recovered = models.BooleanField(default=False)
