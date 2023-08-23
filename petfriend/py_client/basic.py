@@ -1,6 +1,5 @@
 import requests
 
-test_endpoint = "https://dummyjson.com/products/1"
 endpoint = "http://localhost:8000/api/"
 
 if __name__ == "__main__":
