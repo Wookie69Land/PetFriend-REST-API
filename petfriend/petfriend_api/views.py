@@ -9,6 +9,7 @@ def api_home(request, *args, **kwargs):
         data = json.loads(body)
     except:
         print("Can't see JSON")
-    print(data.keys())
+    data["message"] = "This is API test"
+    data["headers"] = dict(request.headers)
     print(data)
-    return JsonResponse({"message": "This is API test"})
+    return JsonResponse(data)
