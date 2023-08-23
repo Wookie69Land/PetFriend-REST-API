@@ -17,9 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from petfriend_api.views import api_home
+from petfriend_api.views import api_home_manual
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', api_home, name="api_home")
+    path('api/', api_home_manual, name="api_home")
 ]
