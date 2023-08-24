@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
+from .serializers import PetSerializer
 
 from django.forms.models import model_to_dict
 import json
@@ -25,4 +28,8 @@ def api_home_manual(request, *args, **kwargs):
 
 @api_view(["GET", "POST"])
 def api_home(request, *args, **kwargs):
+    instance = Pet.objects.all().order_by("?").first()
+    data = {}
+    if instance:
+        data = PetSerializer(instance).data
     return Response(data)
