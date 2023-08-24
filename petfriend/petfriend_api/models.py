@@ -34,7 +34,7 @@ class Pet(models.Model):
     genre = models.SmallIntegerField(choices=((1, "boy"), (2, "girl")))
     species = models.SmallIntegerField(choices=SPECIES)
     variety = models.CharField(max_length=128, null=True)
-    birth_date = models.DateField(null=True)
+    birth_date = models.DateField(null=True, default=date.today)
     profile_image = models.ImageField(null=True, blank=True, upload_to=pet_directory_path)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -57,3 +57,4 @@ class PetHealth(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     recovered = models.BooleanField(default=False)
+

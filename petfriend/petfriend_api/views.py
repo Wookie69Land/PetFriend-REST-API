@@ -1,8 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+from django.forms.models import model_to_dict
 import json
 
-#Not a part of production. It's just test View for practising manual requests and testing dockerized api
+from .models import *
+
+#Not a part of actual api. It's just test View for practising manual requests and testing dockerized api
 def api_home_manual(request, *args, **kwargs):
     body = request.body
     data = {}
@@ -15,3 +22,7 @@ def api_home_manual(request, *args, **kwargs):
     data["param"] = dict(request.GET)
     print(data)
     return JsonResponse(data)
+
+@api_view(["GET", "POST"])
+def api_home(request, *args, **kwargs):
+    return Response(data)
