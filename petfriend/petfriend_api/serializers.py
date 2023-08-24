@@ -18,3 +18,8 @@ class PetSerializer(serializers.ModelSerializer):
         ]
     def get_age(self, obj):
         return obj.get_age()
+
+class FullPetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pet
+        fields = '__all__'
