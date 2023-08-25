@@ -28,8 +28,17 @@ def api_home_manual(request, *args, **kwargs):
 
 @api_view(["GET", "POST"])
 def api_home(request, *args, **kwargs):
-    instance = Pet.objects.all().order_by("?").first()
     data = {}
-    if instance:
-        data = PetSerializer(instance).data
-    return Response(data)
+    if request.method == 'GET':
+        instance = Pet.objects.all().order_by("?").first()
+        if instance:
+            data = PetSerializer(instance).data
+        return Response(data)
+    elif request.method == 'POST':
+        query = request.data
+        try:
+            instance = Pet.objects.get(pk=query['id'])
+            data = PetSerializer(instance).data
+        except:
+            data = json.dumps({"message": "There is no such a pet"})
+        return Response(data)
