@@ -17,6 +17,10 @@ class PetSerializer(serializers.ModelSerializer):
             'age'
         ]
     def get_age(self, obj):
+        if not hasattr(obj, 'id'):
+            return None
+        if not isinstance(obj, Pet):
+            return None
         return obj.get_age()
 
 class FullPetSerializer(serializers.ModelSerializer):

@@ -42,3 +42,12 @@ def api_home(request, *args, **kwargs):
         except:
             data = json.dumps({"message": "There is no such a pet"})
         return Response(data)
+    
+@api_view(["POST"])
+def add_pet(request, *args, **kwargs):
+    serializer = PetSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        instance = serializer.save()
+        print(instance)
+        return Response({"valid data": f"created new pet {instance.name}"})
+    return Response({"invalid data": "couldn't create new pet"}, status=400)
