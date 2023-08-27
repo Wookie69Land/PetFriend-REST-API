@@ -15,7 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from petfriend_api import urls as pet_urls
 
 from petfriend_api.views import api_home_manual, api_home, add_pet
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api_home, name="api_home"),
     path('api/add/', add_pet, name="add_pet"),
+    path('pet_api/', include(pet_urls)),
 ]

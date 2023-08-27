@@ -4,6 +4,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework import permissions
 
 from .serializers import PetSerializer
 
@@ -51,3 +54,24 @@ def add_pet(request, *args, **kwargs):
         print(instance)
         return Response({"valid data": f"created new pet {instance.name}"})
     return Response({"invalid data": "couldn't create new pet"}, status=400)
+
+class PetView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        '''
+        List all pets for given requested user
+        '''
+        pets = Pet.objects.filter(user = request.user.id)
+        serializer = PetSerializer(pets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        '''
+        Create new pet for requested user
+        '''
+        pet = request.data
+        serializer = PetSerializer(data=pet)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
