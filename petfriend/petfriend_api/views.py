@@ -87,11 +87,11 @@ class PetDetailView(APIView):
             return Pet.objects.get(id=pet_id, user = user_id)
         except Pet.DoesNotExist:
             return None
-    def get(self, request, todo_id, *args, **kwargs):
+    def get(self, request, pet_id, *args, **kwargs):
         '''
         Retrieves the Pet with given todo_id
         '''
-        pet = self.get_object(todo_id, request.user.id)
+        pet = self.get_object(pet_id, request.user.id)
         if not pet:
             return Response(
                 {"res": "Object with pet id does not exists"},
@@ -99,6 +99,35 @@ class PetDetailView(APIView):
             )
 
         serializer = PetSerializer(pet)
-        return Response(serializer.data, status=status.HTTP_200_OK)    
-
+        return Response(serializer.data, status=status.HTTP_200_OK)   
+    def put(self, request, pet_id, *args, **kwargs):
+        '''
+        Updates pet with given id if exists
+        '''
+        pet = self.get_object(pet_id, request.user.id)
+        if not pet:
+            return Response(
+                {"res": "Object with pet id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = PetSerializer(instance = pet, data=request.data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pet_id, *args, **kwargs):
+        '''
+        Deletes the pet with given pet_id if exists
+        '''
+        pet = self.get_object(pet_id, request.user.id)
+        if not pet:
+            return Response(
+                {"res": "Object with pet id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        pet.delete()
+        return Response(
+            {"res": "Pet object deleted!"},
+            status=status.HTTP_200_OK
+        )
 
