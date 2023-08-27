@@ -62,6 +62,7 @@ class PetView(APIView):
         '''
         List all pets for given requested user
         '''
+        print(request)
         pets = Pet.objects.filter(user = request.user.id)
         serializer = PetSerializer(pets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -75,3 +76,29 @@ class PetView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PetDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get_object(self, pet_id, user_id):
+        '''
+        Helper method to get the object with given pet_id and user_id
+        '''
+        try:
+            return Pet.objects.get(id=pet_id, user = user_id)
+        except Pet.DoesNotExist:
+            return None
+    def get(self, request, todo_id, *args, **kwargs):
+        '''
+        Retrieves the Pet with given todo_id
+        '''
+        pet = self.get_object(todo_id, request.user.id)
+        if not pet:
+            return Response(
+                {"res": "Object with pet id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = PetSerializer(pet)
+        return Response(serializer.data, status=status.HTTP_200_OK)    
+
+

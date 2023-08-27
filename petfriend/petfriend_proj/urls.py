@@ -22,6 +22,7 @@ from petfriend_api.views import api_home_manual, api_home, add_pet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
     path('api/', api_home, name="api_home"),
     path('api/add/', add_pet, name="add_pet"),
     path('pet_api/', include(pet_urls)),

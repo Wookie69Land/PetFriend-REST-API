@@ -1,4 +1,5 @@
 import requests
+import json
 
 endpoint = "http://localhost:8000/api/"
 
@@ -11,12 +12,17 @@ if __name__ == "__main__":
     # response_post = requests.post(endpoint, json={'id': 1})
     # print(response_post.json())
 
-    endpoint = endpoint + 'add/'
-    pet = {
-        'name' : 'Good boy',
-        'genre' : 1,
-        'species' : 1,
-        'user' : 2,
-    }
-    response_add = requests.post(endpoint, json=pet)
-    print(response_add.json())
+    # endpoint = endpoint + 'add/'
+    # pet = {
+    #     'name' : 'Good boy',
+    #     'genre' : 1,
+    #     'species' : 1,
+    #     'user' : 2,
+    # }
+    # response_add = requests.post(endpoint, json=pet)
+    # print(response_add.json())
+
+    endpoint = 'http://localhost:8000/pet_api/'
+    response_api = requests.get(endpoint, json=json.dumps({'user': {'id': 2}}))
+    print(response_api.json())
+
