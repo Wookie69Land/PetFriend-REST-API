@@ -136,3 +136,13 @@ class PetCreateAPIView(generics.CreateAPIView):
             name = "Jane Doe"
         serializer.save(user=self.request.user.petfrienduser, name=name)
         # send a Django signal here
+
+class PetDeleteAPIView(generics.DestroyAPIView):
+    queryset = Pet.objects.all()
+    serializer_class = PetDetailSerializer   
+    lookup_field = 'pk'
+
+    def perform_destroy(self, instance):
+        print(instance)
+        super().perform_destroy(instance)
+        # send a Django signal here
