@@ -7,9 +7,11 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework import generics
+
 from .permissions import IsOwnerOrReadOnly
 
-from .serializers import PetSerializer
+from .serializers import PetSerializer, PetDetailSerializer
 
 from django.forms.models import model_to_dict
 import json
@@ -99,7 +101,7 @@ class PetDetailView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = PetSerializer(pet)
+        serializer = PetDetailSerializer(pet)
         return Response(serializer.data, status=status.HTTP_200_OK)   
     def put(self, request, pet_id, *args, **kwargs):
         '''
@@ -111,7 +113,7 @@ class PetDetailView(APIView):
                 {"res": "Object with pet id does not exists"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = PetSerializer(instance = pet, data=request.data, partial = True)
+        serializer = PetDetailSerializer(instance = pet, data=request.data, partial = True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -132,3 +134,16 @@ class PetDetailView(APIView):
             status=status.HTTP_200_OK
         )
 
+class PetCreateAPIView(generics.CreateAPIView):
+    queryset = Pet.objects.all()
+    serializer_class = PetDetailSerializer
+
+    def perform_create(self, serializer):
+        sex = serializer.validated_data.get('sex')
+        name = serializer.validated_data.get('name') or None
+        if name is None and sex == 1:
+            name = "John Doe"
+        elif name is None and sex == 2:
+            name = "Jane Doe"
+        serializer.save(user=self.request.user, name=name)
+        # send a Django signal here
