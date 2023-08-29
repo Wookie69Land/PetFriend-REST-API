@@ -70,7 +70,7 @@ class PetView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class PetDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     def get_object(self, pet_id, user):
         '''
         Helper method to get the object with given pet_id and user_id
@@ -145,4 +145,13 @@ class PetDeleteAPIView(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         print(instance)
         super().perform_destroy(instance)
+        # send a Django signal here
+
+class PetUpdateAPIView(generics.UpdateAPIView):
+    queryset = Pet.objects.all()
+    serializer_class = PetDetailSerializer   
+    lookup_field = 'pk'
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
         # send a Django signal here
