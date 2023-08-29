@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import permissions
+from .permissions import IsOwnerOrReadOnly
 
 from .serializers import PetSerializer
 
@@ -78,7 +79,7 @@ class PetView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class PetDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     def get_object(self, pet_id, user_id):
         '''
         Helper method to get the object with given pet_id and user_id
