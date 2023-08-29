@@ -30,7 +30,7 @@ def pet_directory_path(instance, filename):
 
 
 class Pet(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, null=True, blank=True)
     sex = models.SmallIntegerField(choices=((1, "boy"), (2, "girl")))
     species = models.SmallIntegerField(choices=SPECIES)
     variety = models.CharField(max_length=128, null=True)

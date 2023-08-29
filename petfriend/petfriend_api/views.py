@@ -54,7 +54,6 @@ def add_pet(request, *args, **kwargs):
     serializer = PetSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         instance = serializer.save()
-        print(instance)
         return Response({"valid data": f"created new pet {instance.name}"})
     return Response({"invalid data": "couldn't create new pet"}, status=400)
 
@@ -66,35 +65,25 @@ class PetView(APIView):
         List all pets for given requested user
         '''
         print(request)
-        pets = Pet.objects.filter(user = request.user.id)
+        pets = Pet.objects.filter(user = request.user.petfrienduser)
         serializer = PetSerializer(pets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    def post(self, request, *args, **kwargs):
-        '''
-        Create new pet for requested user
-        '''
-        pet = request.data
-        serializer = PetSerializer(data=pet)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class PetDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-    def get_object(self, pet_id, user_id):
+    def get_object(self, pet_id, user):
         '''
         Helper method to get the object with given pet_id and user_id
         '''
         try:
-            return Pet.objects.get(id=pet_id, user = user_id)
+            return Pet.objects.get(id=pet_id, user = user)
         except Pet.DoesNotExist:
             return None
     def get(self, request, pet_id, *args, **kwargs):
         '''
         Retrieves the Pet with given todo_id
         '''
-        pet = self.get_object(pet_id, request.user.id)
+        pet = self.get_object(pet_id, request.user.petfrienduser)
         if not pet:
             return Response(
                 {"res": "Object with pet id does not exists"},
@@ -122,7 +111,7 @@ class PetDetailView(APIView):
         '''
         Deletes the pet with given pet_id if exists
         '''
-        pet = self.get_object(pet_id, request.user.id)
+        pet = self.get_object(pet_id, request.user.petfrienduser)
         if not pet:
             return Response(
                 {"res": "Object with pet id does not exists"}, 
@@ -145,5 +134,5 @@ class PetCreateAPIView(generics.CreateAPIView):
             name = "John Doe"
         elif name is None and sex == 2:
             name = "Jane Doe"
-        serializer.save(user=self.request.user, name=name)
+        serializer.save(user=self.request.user.petfrienduser, name=name)
         # send a Django signal here
