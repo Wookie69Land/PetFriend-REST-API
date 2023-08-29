@@ -89,7 +89,6 @@ class PetDetailView(APIView):
                 {"res": "Object with pet id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         serializer = PetDetailSerializer(pet)
         return Response(serializer.data, status=status.HTTP_200_OK)   
     def put(self, request, pet_id, *args, **kwargs):
