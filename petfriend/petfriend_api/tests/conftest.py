@@ -18,8 +18,7 @@ def client():
     return client
 
 
-# @pytest.fixture
-# def set_up():
-#     create_fitubiuser()
-#     for _ in range(10):
-#         create_fake_recipe()
+@pytest.fixture
+def set_up():
+    user = create_petfrienduser()
+    
